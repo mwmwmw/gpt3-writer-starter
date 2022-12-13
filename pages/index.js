@@ -32,7 +32,7 @@ function SubmitForm() {
 
 const Home = () => {
 
-  const { generate, responses } = useContext(OpenAIContext);
+  const { generate, entries } = useContext(OpenAIContext);
 
   return (
     <div className="root">
@@ -50,7 +50,7 @@ const Home = () => {
         </div>
         <SubmitForm />
         <div className="output-content">
-        {responses.map(v=><p>{v}</p>)}
+        {entries.sort(a, b=> a.timestamp - b.timestamp).map(v=><p className={v.type.toLowerCase()}>{v.text}</p>)}
         </div>
       </div>
       <div className="badge-container grow">

@@ -1,8 +1,13 @@
 import {  useEffect, useState } from "react";
 
+const ENTRY_TYPES = {
+  PROMPT: 'PROMPT',
+  RESPONSE: 'RESPONSE',
+}
+
 export default function useOpenAI() {
     
-  const [responses, setResponses] = useState([]);
+  const [entries, setEntries] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   
   useEffect(()=>{
@@ -18,6 +23,12 @@ export default function useOpenAI() {
   const generate = async (userInput) => {
     setIsGenerating(true);
     
+    setEntries((prev)=>[...prev, {
+      timestamp: Date.now(),
+      type: ENTRY_TYPES.PROMPT,
+      text:`${userInput}`
+    }]);
+
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: {
@@ -26,18 +37,23 @@ export default function useOpenAI() {
       body: JSON.stringify({ userInput }),
     });
   
+
     const data = await response.json();
-    const { output } = data;
-    console.log("OpenAI replied...", output.text)
+    const { text } = data.output;
+    console.log("OpenAI replied...", text)
   
-    setResponses((prev)=>[...prev,`${output.text}`]);
+    setEntries((prev)=>[...prev, {
+      timestamp: Date.now(),
+      type: ENTRY_TYPES.RESPONSE,
+      text
+    }]);
     setIsGenerating(false);
   }
 
   return {
     generate,
     isGenerating,
-    responses,
+    entries
   }
 
 }
