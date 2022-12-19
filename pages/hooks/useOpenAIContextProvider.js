@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import useOpenAI from "./useOpenAI";
+import useOpenAI from "../useOpenAI";
 
 export const OpenAIContext = createContext();
 
